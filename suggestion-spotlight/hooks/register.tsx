@@ -237,7 +237,9 @@ export const register: Register = (on, options) => {
     const below = await next(e)
     if (show === 'in-reply') return below
     const a = await read($, anchor)
-    if (!a || a.status !== 'found' || a.isHidden || e.props.hasSurvey || !a.quotes.length) return below
+    // Once sent, the choice is made: the box gives the space back, while the
+    // outline in the reply stays until the answer is done.
+    if (!a || a.status !== 'found' || a.isHidden || a.isSent || e.props.hasSurvey || !a.quotes.length) return below
     const ui = $.ui.resolve(e)
     const { Box, Button } = ui
     const dismiss = (
