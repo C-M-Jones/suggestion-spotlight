@@ -2,9 +2,10 @@ import { atom, read, update } from 'claude-code'
 import type { EngineInterface, Register } from 'claude-code'
 
 import type { Anchor } from '../types'
+import { abovePrompt, inReply, isStyle, STYLES } from './look'
+import type { Style } from './look'
 import {
   byWords,
-  clip,
   isPhrase,
   lastReply,
   numbered,
@@ -20,13 +21,13 @@ import type { Row, Unit } from './match'
 
 // When you take Claude's suggested next prompt ("do the Friday one now"), find
 // the part of the last reply it refers to and spotlight it: outlined in the
-// reply, and quoted in a box above the prompt.
+// reply, and quoted in a box above the prompt, in the style the person picked.
 
 const offered = atom({ plugin: 'suggestion-spotlight', key: 'offered' } as const, '')
 const anchor = atom({ plugin: 'suggestion-spotlight', key: 'anchor' } as const, null)
 const enabled = atom({ plugin: 'suggestion-spotlight', key: 'enabled' } as const, true)
+const style = atom({ plugin: 'suggestion-spotlight', key: 'style' } as const, 'claude' as Style)
 
-const ACCENT = '#8f8cf4'
 const COMMAND = 'suggestion-spotlight'
 
 type Show = 'both' | 'above-prompt' | 'in-reply'
@@ -121,21 +122,33 @@ async function demo($: EngineInterface): Promise<string> {
 export const register: Register = (on, options) => {
   const model = typeof options.model === 'string' && options.model ? options.model : 'haiku'
   const show: Show = options.show === 'above-prompt' || options.show === 'in-reply' ? options.show : 'both'
+  const configured: Style = isStyle(options.style) ? options.style : 'claude'
 
   on('session.start', async ($, e, next) => {
     const started = await next(e)
     await $.command.register({
       name: COMMAND,
-      description: 'Turn the suggestion spotlight on or off (on, off), or show a demo on the last reply (demo)',
+      description: `Turn the suggestion spotlight on or off (on, off), pick its look (style ${STYLES.join('|')}), or show a demo on the last reply (demo)`,
     })
     const stored = await $.store.get('enabled')
     await update($, enabled, () => stored !== false)
+    // A look picked with the command outlasts the /config default until the default changes.
+    const picked = await $.store.get('style')
+    const pickedOver = await $.store.get('styleOver')
+    await update($, style, () => (isStyle(picked) && pickedOver === configured ? picked : configured))
     return started
   })
 
   on('command.run', { command: COMMAND }, async ($, e) => {
-    const arg = e.args.trim().toLowerCase()
+    const [arg = '', value = ''] = e.args.trim().toLowerCase().split(/\s+/)
     if (arg === 'demo') return { text: await demo($) }
+    if (arg === 'style') {
+      if (!isStyle(value)) return { text: `Styles: ${STYLES.join(', ')}. Now: ${await read($, style)}.` }
+      await update($, style, () => value)
+      await $.store.set('style', value)
+      await $.store.set('styleOver', configured)
+      return { text: `Spotlight style: ${value}. Try /${COMMAND} demo to see it.` }
+    }
     const next = arg === 'on' ? true : arg === 'off' ? false : !(await read($, enabled))
     await update($, enabled, () => next)
     await $.store.set('enabled', next)
@@ -205,21 +218,14 @@ export const register: Register = (on, options) => {
     if (show === 'in-reply') return below
     const a = await read($, anchor)
     if (!a || a.status !== 'found' || a.isHidden || e.props.hasSurvey || !a.quotes.length) return below
-    const { Box, Text, Markdown, Button } = $.ui.resolve(e)
-    const label = a.suggestion === 'demo' ? 'Demo: what a suggestion would point at' : `“${clip(a.suggestion, 60)}” refers to`
+    const ui = $.ui.resolve(e)
+    const { Box, Button } = ui
+    const dismiss = (
+      <Button key="suggestion-spotlight-dismiss" label="✕" plain role="dismiss" onPress={() => update($, anchor, () => null)} />
+    )
     return (
       <Box flexDirection="column">
-        <Box flexDirection="column" borderStyle="round" borderColor={ACCENT} paddingLeft={1}>
-          <Box flexDirection="row" justifyContent="space-between">
-            <Text color={ACCENT} wrap="truncate-end">
-              ↳ {label}:
-            </Text>
-            <Button key="suggestion-spotlight-dismiss" label="✕" plain role="dismiss" onPress={() => update($, anchor, () => null)} />
-          </Box>
-          {a.quotes.map((q, i) => (
-            <Markdown key={`q${i}`} text={q} />
-          ))}
-        </Box>
+        {abovePrompt(ui, await read($, style), a.suggestion, a.quotes.join('\n'), dismiss)}
         {below}
       </Box>
     )
@@ -233,21 +239,13 @@ export const register: Register = (on, options) => {
     const segments = segmentsOf(e.props.text, new Set(a.units))
     if (!segments) return next(e)
 
-    const { Box, Text, Markdown } = $.ui.resolve(e)
-    const label = a.suggestion === 'demo' ? 'demo' : `“${clip(a.suggestion, 60)}” refers to this`
+    const ui = $.ui.resolve(e)
+    const { Box, Markdown } = ui
+    const look = await read($, style)
     return (
       <Box flexDirection="column">
         {segments.map((s, i) =>
-          s.isTarget ? (
-            <Box key={`t${i}`} flexDirection="column" borderStyle="round" borderColor={ACCENT} paddingLeft={1}>
-              <Text color={ACCENT} wrap="truncate-end">
-                ↳ {label}
-              </Text>
-              <Markdown text={s.text} />
-            </Box>
-          ) : (
-            <Markdown key={`p${i}`} text={s.text} />
-          ),
+          s.isTarget ? inReply(ui, look, a.suggestion, s.text, `t${i}`) : <Markdown key={`p${i}`} text={s.text} />,
         )}
       </Box>
     )

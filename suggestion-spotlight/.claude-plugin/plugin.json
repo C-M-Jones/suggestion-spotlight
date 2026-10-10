@@ -8,6 +8,13 @@
   },
   "types": "./types/index.d.ts",
   "userConfig": {
+    "style": {
+      "type": "string",
+      "title": "Spotlight style",
+      "description": "claude: clay box with the crab; outline: purple box; sparkle: sparkles, no box; highlighter: yellow highlighter pen",
+      "default": "claude",
+      "options": ["claude", "outline", "sparkle", "highlighter"]
+    },
     "show": {
       "type": "string",
       "title": "Where to spotlight",

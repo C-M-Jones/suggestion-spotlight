@@ -137,6 +137,54 @@ export const lastReply = (rows: Row[], followUp: string): string => {
   return parts.join('\n\n')
 }
 
+// --- Looks that change the passage's own text rather than draw around it.
+
+const MARKER = /^(\s*(?:[-*+]|\d+[.)]|#{1,6})\s+)?(.*)$/
+
+/** The passage with a sparkle at each end; a code block or table gets its sparkles on lines of their own. */
+export const sparkled = (md: string): string => {
+  const lines = md.split('\n')
+  const first = lines.findIndex(l => l.trim())
+  const last = lines.findLastIndex(l => l.trim())
+  if (first < 0) return md
+  if (/^\s*(```|~~~|\|)/.test(lines[first] ?? '')) return `✨\n\n${md}\n\n✨`
+  const [, marker = '', rest = ''] = MARKER.exec(lines[first] ?? '') ?? []
+  lines[first] = `${marker}✨ ${rest}`
+  if (!/^\s*(```|~~~|\|)/.test(lines[last] ?? '')) lines[last] = `${lines[last]} ✨`
+  return lines.join('\n')
+}
+
+/** A run of one line as a highlighter draws it: plain text, bold or not. */
+export type Run = { text: string; bold: boolean }
+
+/** One line of the highlighted passage: its list marker (left unmarked) and its runs. */
+export type InkLine = { marker: string; runs: Run[] }
+
+/**
+ * The passage as plain lines for the highlighter, which paints text and so
+ * cannot draw markdown: bold stays bold, code and links keep their words.
+ */
+export const inkLines = (md: string): InkLine[] =>
+  md
+    .split('\n')
+    .filter(l => l.trim() && !/^\s*(```|~~~)/.test(l) && !/^\s*\|?[\s:|-]+\|[\s:|-]*$/.test(l))
+    .map(line => {
+      const [, marker = '', rest = ''] = MARKER.exec(line) ?? []
+      const plain = rest.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/`([^`]*)`/g, '$1')
+      const runs: Run[] = plain
+        .split(/(\*\*|__)/)
+        .reduce<{ runs: Run[]; bold: boolean }>(
+          (acc, part) =>
+            part === '**' || part === '__'
+              ? { ...acc, bold: !acc.bold }
+              : part
+                ? { ...acc, runs: [...acc.runs, { text: part, bold: acc.bold }] }
+                : acc,
+          { runs: [], bold: false },
+        ).runs
+      return { marker, runs }
+    })
+
 export type Segment = { text: string; isTarget: boolean }
 
 /** Splits a drawn block of the reply into runs of plain and outlined lines, or null when it holds no target. */

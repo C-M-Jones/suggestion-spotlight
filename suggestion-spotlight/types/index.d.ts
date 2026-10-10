@@ -21,6 +21,8 @@ declare module 'claude-code' {
       anchor: Anchor | null
       /** Off after `/suggestion-spotlight off`, remembered across sessions. */
       enabled: boolean
+      /** The look: the /config default, or what `/suggestion-spotlight style` picked since. */
+      style: 'claude' | 'outline' | 'sparkle' | 'highlighter'
     }
   }
 }
