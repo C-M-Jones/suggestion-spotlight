@@ -137,22 +137,9 @@ export const lastReply = (rows: Row[], followUp: string): string => {
   return parts.join('\n\n')
 }
 
-// --- Looks that change the passage's own text rather than draw around it.
+// --- The highlighter, which paints text and so needs the passage as plain runs.
 
 const MARKER = /^(\s*(?:[-*+]|\d+[.)]|#{1,6})\s+)?(.*)$/
-
-/** The passage with a sparkle at each end; a code block or table gets its sparkles on lines of their own. */
-export const sparkled = (md: string): string => {
-  const lines = md.split('\n')
-  const first = lines.findIndex(l => l.trim())
-  const last = lines.findLastIndex(l => l.trim())
-  if (first < 0) return md
-  if (/^\s*(```|~~~|\|)/.test(lines[first] ?? '')) return `✨\n\n${md}\n\n✨`
-  const [, marker = '', rest = ''] = MARKER.exec(lines[first] ?? '') ?? []
-  lines[first] = `${marker}✨ ${rest}`
-  if (!/^\s*(```|~~~|\|)/.test(lines[last] ?? '')) lines[last] = `${lines[last]} ✨`
-  return lines.join('\n')
-}
 
 /** A run of one line as a highlighter draws it: plain text, bold or not. */
 export type Run = { text: string; bold: boolean }

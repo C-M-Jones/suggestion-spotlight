@@ -11,27 +11,43 @@
     "style": {
       "type": "string",
       "title": "Spotlight style",
-      "description": "claude: clay box with the crab; outline: purple box; sparkle: sparkles, no box; highlighter: yellow highlighter pen",
+      "description": "claude: a clay box headed by the pixel crab; highlighter: the passage marked in yellow, no box",
       "default": "claude",
-      "options": ["claude", "outline", "sparkle", "highlighter"]
+      "options": [
+        "claude",
+        "highlighter"
+      ]
     },
     "show": {
       "type": "string",
       "title": "Where to spotlight",
-      "description": "both: outline the passage in the reply and quote it above the prompt",
+      "description": "both: mark the passage in the reply and quote it above the prompt",
       "default": "both",
-      "options": ["both", "above-prompt", "in-reply"]
+      "options": [
+        "both",
+        "above-prompt",
+        "in-reply"
+      ]
     },
     "model": {
       "type": "string",
       "title": "Lookup model",
       "description": "The model that matches a suggestion to the reply; haiku is fast and cheap",
       "default": "haiku",
-      "options": ["haiku", "sonnet"]
+      "options": [
+        "haiku",
+        "sonnet"
+      ]
     }
   },
   "homepage": "https://github.com/C-M-Jones/claude-mods/tree/main/suggestion-spotlight",
   "repository": "https://github.com/C-M-Jones/claude-mods",
   "license": "MIT",
-  "keywords": ["suggestions", "prompt", "ui", "highlight", "desktop"]
+  "keywords": [
+    "suggestions",
+    "prompt",
+    "ui",
+    "highlight",
+    "desktop"
+  ]
 }

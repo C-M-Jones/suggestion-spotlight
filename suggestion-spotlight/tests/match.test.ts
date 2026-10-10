@@ -1,6 +1,6 @@
 import { expect, test } from 'claude-code/testing'
 
-import { byWords, inkLines, lastReply, numbered, pickFrom, sectionOf, segmentsOf, sparkled, squash, unitsOf } from '../hooks/match'
+import { byWords, inkLines, lastReply, numbered, pickFrom, sectionOf, segmentsOf, squash, unitsOf } from '../hooks/match'
 
 const REPLY = `Two ways to run the refresh:
 
@@ -108,14 +108,6 @@ test('a block without the passage is left alone', () => {
   expect(segmentsOf('Nothing to see here.', new Set(['something else']))).toBe(null)
 })
 
-test('sparkles go inside a list marker and at the end', () => {
-  expect(sparkled('2. **Friday only:** keep it.')).toEqual('2. ✨ **Friday only:** keep it. ✨')
-  expect(sparkled('Plain sentence.')).toEqual('✨ Plain sentence. ✨')
-})
-
-test('a table gets its sparkles on lines of their own', () => {
-  expect(sparkled('| a | b |\n|---|---|')).toEqual('✨\n\n| a | b |\n|---|---|\n\n✨')
-})
 
 test('the highlighter keeps bold, drops code ticks and link targets, leaves the marker unmarked', () => {
   expect(inkLines('1. **Add a button** to `panel.tsx`, see [docs](https://x.y)')).toEqual([

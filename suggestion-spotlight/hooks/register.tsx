@@ -2,7 +2,7 @@ import { atom, read, update } from 'claude-code'
 import type { EngineInterface, Register } from 'claude-code'
 
 import type { Anchor } from '../types'
-import { abovePrompt, inReply, isStyle, noteColumns, STYLES } from './look'
+import { abovePrompt, inReply, isStyle, STYLES } from './look'
 import type { Style } from './look'
 import {
   byWords,
@@ -215,7 +215,6 @@ export const register: Register = (on, options) => {
   // whatever other mods draw there beneath it.
   on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
     const below = await next(e)
-    noteColumns(e.props.bodyColumns)
     if (show === 'in-reply') return below
     const a = await read($, anchor)
     if (!a || a.status !== 'found' || a.isHidden || e.props.hasSurvey || !a.quotes.length) return below

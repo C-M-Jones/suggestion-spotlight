@@ -22,7 +22,7 @@ declare module 'claude-code' {
       /** Off after `/suggestion-spotlight off`, remembered across sessions. */
       enabled: boolean
       /** The look: the /config default, or what `/suggestion-spotlight style` picked since. */
-      style: 'claude' | 'outline' | 'sparkle' | 'highlighter'
+      style: 'claude' | 'highlighter'
     }
   }
 }
