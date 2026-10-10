@@ -1,7 +1,7 @@
 {
-  "name": "claude-mods",
+  "name": "suggestion-spotlight",
   "owner": { "name": "Cael Jones", "url": "https://github.com/C-M-Jones" },
-  "metadata": { "description": "Cael Jones's Claude Code mods." },
+  "metadata": { "description": "Suggestion Spotlight, a Claude Code mod by Cael Jones." },
   "plugins": [
     {
       "name": "suggestion-spotlight",

@@ -31,7 +31,7 @@ Switch at any time with `/suggestion-spotlight style highlighter` or `/suggestio
 In a Claude Code terminal session:
 
 ```
-/plugin install suggestion-spotlight --marketplace C-M-Jones/claude-mods
+/plugin install suggestion-spotlight --marketplace C-M-Jones/suggestion-spotlight
 ```
 
 Answer `y` to add the marketplace and pick the user scope. It's active straight away.
@@ -39,13 +39,13 @@ Answer `y` to add the marketplace and pick the user scope. It's active straight 
 **Desktop app, or loading it by hand:** clone the repo and add the folder to the `env` block of `~/.claude/settings.json`. Separate several mod folders with `:`, and append to the variable rather than replacing it if it's already set.
 
 ```bash
-git clone https://github.com/C-M-Jones/claude-mods.git ~/claude-mods
+git clone https://github.com/C-M-Jones/suggestion-spotlight.git ~/suggestion-spotlight
 ```
 
 ```json
 {
   "env": {
-    "CLAUDE_CODE_PLUGIN_DIRS": "~/claude-mods/suggestion-spotlight"
+    "CLAUDE_CODE_PLUGIN_DIRS": "~/suggestion-spotlight/suggestion-spotlight"
   }
 }
 ```

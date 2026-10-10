@@ -40,8 +40,8 @@
       ]
     }
   },
-  "homepage": "https://github.com/C-M-Jones/claude-mods/tree/main/suggestion-spotlight",
-  "repository": "https://github.com/C-M-Jones/claude-mods",
+  "homepage": "https://github.com/C-M-Jones/suggestion-spotlight/tree/main/suggestion-spotlight",
+  "repository": "https://github.com/C-M-Jones/suggestion-spotlight",
   "license": "MIT",
   "keywords": [
     "suggestions",
