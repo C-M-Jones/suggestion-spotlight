@@ -1,0 +1,30 @@
+{
+  "name": "suggestion-spotlight",
+  "version": "1.0.0",
+  "description": "Take Claude's suggested next prompt and see what it refers to: the passage is outlined in the reply and quoted above the prompt.",
+  "author": {
+    "name": "Cael Jones",
+    "url": "https://github.com/C-M-Jones"
+  },
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "show": {
+      "type": "string",
+      "title": "Where to spotlight",
+      "description": "both: outline the passage in the reply and quote it above the prompt",
+      "default": "both",
+      "options": ["both", "above-prompt", "in-reply"]
+    },
+    "model": {
+      "type": "string",
+      "title": "Lookup model",
+      "description": "The model that matches a suggestion to the reply; haiku is fast and cheap",
+      "default": "haiku",
+      "options": ["haiku", "sonnet"]
+    }
+  },
+  "homepage": "https://github.com/C-M-Jones/claude-mods/tree/main/suggestion-spotlight",
+  "repository": "https://github.com/C-M-Jones/claude-mods",
+  "license": "MIT",
+  "keywords": ["suggestions", "prompt", "ui", "highlight", "desktop"]
+}
