@@ -1,0 +1,6 @@
+{
+  "name": "reply-highlight",
+  "version": "0.1.0",
+  "description": "When you take Claude's suggested next prompt, outlines the part of the last reply it refers to.",
+  "types": "./types/index.d.ts"
+}
