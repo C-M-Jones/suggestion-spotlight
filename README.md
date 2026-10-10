@@ -87,3 +87,5 @@ Claude Code with mods (function hooks), an early-access API. Built and tested on
 ## Licence
 
 MIT. See [LICENSE](LICENSE).
+
+Made by [Cael Jones](https://github.com/C-M-Jones). If you use or build on this, a credit or a link back is appreciated.
