@@ -1,0 +1,14 @@
+{
+  "name": "claude-mods",
+  "owner": { "name": "Cael Jones", "url": "https://github.com/C-M-Jones" },
+  "metadata": { "description": "Cael Jones's Claude Code mods." },
+  "plugins": [
+    {
+      "name": "suggestion-spotlight",
+      "source": "./suggestion-spotlight",
+      "description": "Take Claude's suggested next prompt and see what it refers to: the passage is marked in the reply and quoted above the prompt.",
+      "version": "1.0.0",
+      "category": "mod"
+    }
+  ]
+}

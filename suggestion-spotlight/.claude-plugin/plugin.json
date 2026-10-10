@@ -1,7 +1,7 @@
 {
   "name": "suggestion-spotlight",
   "version": "1.0.0",
-  "description": "Take Claude's suggested next prompt and see what it refers to: the passage is outlined in the reply and quoted above the prompt.",
+  "description": "Take Claude's suggested next prompt and see what it refers to: the passage is marked in the reply and quoted above the prompt.",
   "author": {
     "name": "Cael Jones",
     "url": "https://github.com/C-M-Jones"
