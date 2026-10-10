@@ -99,6 +99,12 @@ async function take($: EngineInterface, text: string, model: string, isSent = fa
   void locate($, text, model, isSent)
 }
 
+// ✕ forgets the suggestion as well as the spotlight, so taking it again looks it up again.
+async function forget($: EngineInterface): Promise<void> {
+  await update($, anchor, () => null)
+  await update($, offered, () => '')
+}
+
 // `/suggestion-spotlight demo`: spotlight the last list item (or paragraph) of
 // the last reply, so the look can be tried without waiting for a suggestion.
 async function demo($: EngineInterface): Promise<string> {
@@ -235,7 +241,7 @@ export const register: Register = (on, options) => {
     const ui = $.ui.resolve(e)
     const { Box, Button } = ui
     const dismiss = (
-      <Button key="suggestion-spotlight-dismiss" label="✕" plain role="dismiss" onPress={() => update($, anchor, () => null)} />
+      <Button key="suggestion-spotlight-dismiss" label="✕" plain role="dismiss" onPress={() => forget($)} />
     )
     return (
       <Box flexDirection="column">
