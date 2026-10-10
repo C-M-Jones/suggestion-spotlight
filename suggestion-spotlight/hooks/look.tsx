@@ -34,8 +34,8 @@ export const noteColumns = (n: number): void => {
   if (n > 0) columns = n
 }
 
-/** About 8 CSS px a column, less the transcript's gutters; a sane width before the band has said. */
-const stripWidth = (): number => Math.max(240, Math.min(1400, columns ? columns * 8 - 64 : 640))
+/** About 8 CSS px a column, less the band's own controls (as savvy-progress sizes its bar); a sane width before the band has said. */
+const stripWidth = (): number => Math.max(180, Math.min(1400, columns ? columns * 8 - 96 : 600))
 
 const CELL = 4
 const STRIP_ROWS = 3
@@ -143,9 +143,9 @@ const passage = (ui: Ui, style: Style, md: string, key: string): RenderElement =
     const width = stripWidth()
     return (
       <Box key={key} flexDirection="column">
-        <Svg source={sparkleStrip(width, true, 0)} alt="" width={width} height={STRIP_ROWS * CELL} />
+        <Svg source={sparkleStrip(width, true, 0)} alt="sparkles" width={width} height={STRIP_ROWS * CELL} />
         <Markdown text={md} />
-        <Svg source={sparkleStrip(width, false, 37)} alt="" width={width} height={STRIP_ROWS * CELL} />
+        <Svg source={sparkleStrip(width, false, 37)} alt="sparkles" width={width} height={STRIP_ROWS * CELL} />
       </Box>
     )
   }
