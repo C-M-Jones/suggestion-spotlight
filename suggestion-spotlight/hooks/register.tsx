@@ -128,7 +128,7 @@ export const register: Register = (on, options) => {
     const started = await next(e)
     await $.command.register({
       name: COMMAND,
-      description: `Turn the suggestion spotlight on or off (on, off), pick its look (style ${STYLES.join('|')}), or show a demo on the last reply (demo)`,
+      description: `Turn the suggestion spotlight on or off (on, off), pick its look (style ${STYLES.join('|')}), or show a demo on the last reply (demo, or demo <a suggestion> to run the real lookup)`,
     })
     const stored = await $.store.get('enabled')
     await update($, enabled, () => stored !== false)
@@ -141,7 +141,21 @@ export const register: Register = (on, options) => {
 
   on('command.run', { command: COMMAND }, async ($, e) => {
     const [arg = '', value = ''] = e.args.trim().toLowerCase().split(/\s+/)
-    if (arg === 'demo') return { text: await demo($) }
+    if (arg === 'demo') {
+      // `demo <text>`: the real lookup, as if <text> were the suggestion taken with Tab.
+      const asIf = e.args.trim().replace(/^demo\s*/i, '').trim()
+      if (!asIf) return { text: await demo($) }
+      await update($, offered, () => asIf)
+      await update($, anchor, () => null)
+      await locate($, asIf, model, false)
+      const found = await read($, anchor)
+      return {
+        text:
+          found?.status === 'found'
+            ? `Spotlighting what “${asIf}” refers to. Press ✕ on the box, or type, to clear it.`
+            : `“${asIf}” does not point at anything specific in the reply above.`,
+      }
+    }
     if (arg === 'style') {
       if (!isStyle(value)) return { text: `Styles: ${STYLES.join(', ')}. Now: ${await read($, style)}.` }
       await update($, style, () => value)
