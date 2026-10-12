@@ -7,7 +7,7 @@
       "name": "suggestion-spotlight",
       "source": "./suggestion-spotlight",
       "description": "Take Claude's suggested next prompt and see what it refers to: the passage is marked in the reply and quoted above the prompt.",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "category": "mod"
     }
   ]
