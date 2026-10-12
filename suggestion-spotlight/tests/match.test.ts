@@ -1,6 +1,6 @@
 import { expect, test } from 'claude-code/testing'
 
-import { byWords, inkLines, lastReply, numbered, pickFrom, sectionOf, segmentsOf, squash, unitsOf } from '../hooks/match'
+import { byWords, inkLines, isTabFill, lastReply, numbered, pickFrom, sectionOf, segmentsOf, squash, unitsOf } from '../hooks/match'
 
 const REPLY = `Two ways to run the refresh:
 
@@ -124,4 +124,11 @@ test('the highlighter keeps bold, drops code ticks and link targets, leaves the 
 test('the highlighter skips code fences and table rules', () => {
   expect(inkLines('```bash\nnpm test\n```').map(l => l.runs.map(r => r.text).join(''))).toEqual(['npm test'])
   expect(inkLines('| a |\n|---|').length).toBe(1)
+})
+
+test('only an empty box filled with a phrase counts as taking the suggestion', () => {
+  expect(isTabFill('', 'do the friday one now')).toBe(true)
+  // The person's own draft changed outside an edit (". " then autocorrect, say): not Tab.
+  expect(isTabFill('The thing that would help most is setting up the simulator', 'The thing that would help most is setting up the simulator.')).toBe(false)
+  expect(isTabFill('', 'ok')).toBe(false)
 })

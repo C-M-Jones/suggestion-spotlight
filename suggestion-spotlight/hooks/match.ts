@@ -9,6 +9,16 @@ export const clip = (s: string, max: number): string => (s.length > max ? s.slic
 export const isPhrase = (s: string): boolean => s.trim().split(/\s+/).length >= 2
 
 /**
+ * Whether the draft was filled by taking a suggestion (Tab) rather than typed:
+ * the box changed without an edit of the person's, from empty to a phrase.
+ * Suggestions are only offered in an empty box, so a box that already held
+ * the person's own words was changed some other way (autocorrect, a text
+ * substitution, an edit folded out of `prompt.edit`), not by Tab.
+ */
+export const isTabFill = (before: string, draft: string): boolean =>
+  !squash(before) && squash(draft) !== squash(before) && isPhrase(draft)
+
+/**
  * A unit is what an outline may hold: one line of prose or one list item, or a
  * whole code block or table, which would break apart if split.
  */

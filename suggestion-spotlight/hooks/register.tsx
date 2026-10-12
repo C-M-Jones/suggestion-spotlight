@@ -6,7 +6,7 @@ import { abovePrompt, inReply, isStyle, STYLES } from './look'
 import type { Style } from './look'
 import {
   byWords,
-  isPhrase,
+  isTabFill,
   lastReply,
   numbered,
   pickFrom,
@@ -189,15 +189,15 @@ export const register: Register = (on, options) => {
   })
 
   // The desktop app neither raises `prompt.suggest` nor counts taking the
-  // suggestion (Tab) as an edit: the phrase just appears in the box. So a box
-  // that holds a phrase the person never typed was filled by Tab, and the first
+  // suggestion (Tab) as an edit: the phrase just appears in the box. So an empty
+  // box that now holds a phrase the person never typed was filled by Tab, and the first
   // keystroke after it shows that. Typing along with it keeps the spotlight;
   // typing something else hides it, and clearing the box brings it back.
   on('prompt.edit', async ($, e, next) => {
     const box = await next(e)
     const before = lastBox
     lastBox = box.text
-    if (squash(e.text) !== squash(before) && isPhrase(e.text)) await take($, e.text.trim(), model)
+    if (isTabFill(before, e.text)) await take($, e.text.trim(), model)
     const suggestion = await read($, offered)
     if (!suggestion) return box
     const typed = squash(box.text)
@@ -211,7 +211,7 @@ export const register: Register = (on, options) => {
   on('prompt.submit', async ($, e, next) => {
     const before = lastBox
     lastBox = ''
-    if (e.origin.kind === 'composer' && squash(e.text) !== squash(before) && isPhrase(e.text)) {
+    if (e.origin.kind === 'composer' && isTabFill(before, e.text)) {
       await take($, e.text.trim(), model, true)
       return next(e)
     }
